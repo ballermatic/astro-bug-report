@@ -1,0 +1,21 @@
+---
+import { Head } from 'astro-capo';
+import '@styles/global.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <Head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="canonical" href={import.meta.env.SITE} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="robots" href="/robots.txt" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+  </Head>
+  <body
+    class="grid min-h-dvh grid-rows-[auto_1fr_auto] overflow-y-scroll text-gray-900 antialiased">
+    <slot />
+  </body>
+</html>

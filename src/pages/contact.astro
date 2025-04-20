@@ -1,0 +1,171 @@
+---
+import Button from '@components/Button.astro';
+import Layout from '@layouts/Layout.astro';
+import { createForm } from '@utils/form';
+import { z } from 'astro:content';
+
+const schema = z.object({
+  firstname: z.string().min(1),
+  lastname: z.string().min(1),
+  email: z.string().email(),
+  phone: z.string().optional(),
+  message: z.string().optional()
+});
+
+const { data, isValid, fields, errors } = await createForm(
+  schema,
+  Astro.request
+);
+
+let submissionResult = '';
+if (isValid) {
+  // Save form data and prepare to send email
+  // This would connect with an email service like Resend
+  submissionResult = 'success';
+  console.log('Form submission received:', data);
+  // For now, just log the data until email integration is added
+}
+---
+
+<Layout>
+  <section class="relative isolate border-t border-b border-gray-300">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 lg:grid-cols-2">
+      <form
+        action="/api/submit-contact"
+        method="POST"
+        class="px-6 pt-20 pb-24 sm:pb-32 lg:px-8 lg:py-48">
+        <div class="mx-auto max-w-xl lg:mr-0 lg:max-w-lg">
+          {
+            submissionResult === 'success' && (
+              <div class="mb-6 rounded-md bg-green-50 p-4">
+                <div class="flex">
+                  <div class="flex-shrink-0">
+                    <svg
+                      class="h-5 w-5 text-green-400"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true">
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <div class="ml-3">
+                    <h3 class="text-sm font-medium text-green-800">
+                      Message sent
+                    </h3>
+                    <p class="mt-2 text-sm text-green-700">
+                      Thank you for reaching out! We'll get back to you soon.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )
+          }
+
+          <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+            <div>
+              <label for="firstname" class="block text-sm font-semibold"
+                >First name</label
+              >
+              <div class="mt-1">
+                <input
+                  id="firstname"
+                  {...fields.firstname}
+                  class="block w-full px-3.5 py-2 text-base inset-shadow-sm inset-shadow-gray-300 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-700"
+                />
+                {
+                  errors?.firstname && (
+                    <p class="mt-1 text-sm text-red-600">
+                      {errors.firstname.message}
+                    </p>
+                  )
+                }
+              </div>
+            </div>
+            <div>
+              <label for="lastname" class="block text-sm font-semibold"
+                >Last name</label
+              >
+              <div class="mt-1">
+                <input
+                  id="lastname"
+                  {...fields.lastname}
+                  class="block w-full px-3.5 py-2 text-base inset-shadow-sm inset-shadow-gray-300 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-700"
+                />
+                {
+                  errors?.lastname && (
+                    <p class="mt-1 text-sm text-red-600">
+                      {errors.lastname.message}
+                    </p>
+                  )
+                }
+              </div>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="email" class="block text-sm font-semibold"
+                >Email</label
+              >
+              <div class="mt-1">
+                <input
+                  id="email"
+                  {...fields.email}
+                  class="block w-full px-3.5 py-2 text-base inset-shadow-sm inset-shadow-gray-300 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-700"
+                />
+                {
+                  errors?.email && (
+                    <p class="mt-1 text-sm text-red-600">
+                      {errors.email.message}
+                    </p>
+                  )
+                }
+              </div>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="phone" class="block text-sm font-semibold"
+                >Phone number <span class="text-xs text-gray-500"
+                  >(optional)</span
+                ></label
+              >
+              <div class="mt-1">
+                <input
+                  id="phone"
+                  {...fields.phone}
+                  class="block w-full px-3.5 py-2 text-base inset-shadow-sm inset-shadow-gray-300 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-700"
+                />
+              </div>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="message" class="block text-sm font-semibold"
+                >Message <span class="text-xs text-gray-500">(optional)</span
+                ></label
+              >
+              <div class="mt-1">
+                <textarea
+                  id="message"
+                  {...fields.message}
+                  rows="4"
+                  class="block w-full px-3.5 py-2 text-base inset-shadow-sm inset-shadow-gray-300 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-700"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="mt-8 flex items-center justify-between">
+            <Button type="submit" variant="primary"> Send message </Button>
+            {
+              Astro.request.method === 'POST' &&
+                !isValid &&
+                !submissionResult && (
+                  <p class="text-sm text-red-600">
+                    Please correct the errors above
+                  </p>
+                )
+            }
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+</Layout>
