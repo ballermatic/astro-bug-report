@@ -1,5 +1,4 @@
 ---
-import Button from '@components/Button.astro';
 import Layout from '@layouts/Layout.astro';
 import { createForm } from '@utils/form';
 import { z } from 'astro:content';
@@ -153,7 +152,9 @@ if (isValid) {
             </div>
           </div>
           <div class="mt-8 flex items-center justify-between">
-            <Button type="submit" variant="primary"> Send message </Button>
+            <button type="submit" class="bg-blue-600 p-4">
+              Send message
+            </button>
             {
               Astro.request.method === 'POST' &&
                 !isValid &&
